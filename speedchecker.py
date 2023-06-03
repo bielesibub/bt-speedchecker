@@ -90,7 +90,7 @@ values = []
 if not output_csv_exists:
     with open(output_csv, 'w') as output_csv_file:
 
-        for key, value in current_status_dict:
+        for key, value in current_status_dict.items():
             keys.append( key )
             values.append( value )
  
