@@ -90,9 +90,9 @@ values = []
 if not output_csv_exists:
     with open(output_csv, 'w') as output_csv_file:
 
-        for key in current_status_dict:
+        for key, value in current_status_dict:
             keys.append( key )
-            values.append( current_status_dict[key] )
+            values.append( value )
  
         output_csv_file.write(",".join( keys ) + '\n')
         output_csv_file.write(",".join( values ) + '\n')
