@@ -100,7 +100,7 @@ if not output_csv_exists:
 
 else:
     with open(output_csv, 'a') as output_csv_file:
-        for key in current_status_dict:
+        for key in current_status_dict.items():
             values.append( current_status_dict[key] )
 
         output_csv_file.write(",".join( values ) + '\n')
