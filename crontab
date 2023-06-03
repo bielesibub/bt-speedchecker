@@ -1,0 +1,1 @@
+*/15 * * * * python3 /media/pickler/share/bt-speedchecker.py >/dev/null 2>&1
