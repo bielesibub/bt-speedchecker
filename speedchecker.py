@@ -52,27 +52,37 @@ status_page_xml = requests.get('http://bthomehub.home/nonAuth/wan_conn.xml', hea
 #status_page_html = requests.get('http://bthomehub.home/basic_-_status.htm')
 #status_page_html = BeautifulSoup(status_page_html.content, 'html.parser')
 #print(status_page_html.prettify())
-
-status_page = ET.fromstring(status_page_xml.content)
- # sed -r '/wan_conn_volume_list/{N;s/.*\[.//;s/[^0-9]\],$//;s/%3B/ /g;s/^[0-9]+ ([0-9]+) ([0-9]+)$/\1 \2/g;p};d'
-status_rate_arr = status_page.findall( ".//status_rate")[0].get("value")
-sysuptime = status_page.findall( ".//sysuptime")[0].get("value")
-# returns [['0%3B0%3B0%3B0'], ['49141000%3B107853000%3B0%3B0'], ['0%3B0%3B0%3B0'], null
-
-status_rate_arr = status_rate_arr.replace('[', '').replace(']','').replace(' ','').replace("'",'').split(',')
-
-
-# #broadband, #FirmwareVersion, #FirmwareUpdated, #SerialNumber, #NetworkUptime, #SystemUptime, #BTWiFi
-# #Upstream
 current_status_dict = {}
 current_status_dict['timestamp'] = now
-#current_status_dict['statusRateArr'] = status_rate_arr[1].split('%3B')
-current_status_dict['uploadSpeed'] = status_rate_arr[1].split('%3B')[0] #status_page.find("p", {"id": "Upstream"})
-current_status_dict['downloadSpeed'] = status_rate_arr[1].split('%3B')[1] #status_page.find("p", {"id": "Upstream"})
-current_status_dict['systemUptime'] = sysuptime
 
-current_status_dict['status'] = status_page.findall( ".//link_status")[0].get("value").split('%3B')[0]
-#current_status_dict['statusArr'] = status_page.findall( ".//link_status")[0].get("value").split('%3B')
+
+if status_page_xml.status_code == 200:
+    status_page = ET.fromstring(status_page_xml.content)
+    # sed -r '/wan_conn_volume_list/{N;s/.*\[.//;s/[^0-9]\],$//;s/%3B/ /g;s/^[0-9]+ ([0-9]+) ([0-9]+)$/\1 \2/g;p};d'
+    status_rate_arr = status_page.findall( ".//status_rate")[0].get("value")
+    sysuptime = status_page.findall( ".//sysuptime")[0].get("value")
+    # returns [['0%3B0%3B0%3B0'], ['49141000%3B107853000%3B0%3B0'], ['0%3B0%3B0%3B0'], null
+
+    status_rate_arr = status_rate_arr.replace('[', '').replace(']','').replace(' ','').replace("'",'').split(',')
+
+
+    # #broadband, #FirmwareVersion, #FirmwareUpdated, #SerialNumber, #NetworkUptime, #SystemUptime, #BTWiFi
+    # #Upstream
+    
+    #current_status_dict['statusRateArr'] = status_rate_arr[1].split('%3B')
+    current_status_dict['uploadSpeed'] = status_rate_arr[1].split('%3B')[0] #status_page.find("p", {"id": "Upstream"})
+    current_status_dict['downloadSpeed'] = status_rate_arr[1].split('%3B')[1] #status_page.find("p", {"id": "Upstream"})
+    current_status_dict['systemUptime'] = sysuptime
+
+    current_status_dict['status'] = status_page.findall( ".//link_status")[0].get("value").split('%3B')[0]
+    #current_status_dict['statusArr'] = status_page.findall( ".//link_status")[0].get("value").split('%3B')
+else:
+
+    current_status_dict['uploadSpeed'] = '0'
+    current_status_dict['downloadSpeed'] = '0'
+    current_status_dict['systemUptime'] = '0'
+
+    current_status_dict['status'] = f'unavailable response code {status_page_xml.status_code}'
 
 """
 
