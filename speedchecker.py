@@ -3,6 +3,7 @@ import os
 import datetime
 import xml.etree.ElementTree as ET
 import json
+import re
 
 from bs4 import BeautifulSoup
 
@@ -49,6 +50,19 @@ output_csv_exists = os.path.isfile(output_csv)
 
 status_page_xml = requests.get('http://bthomehub.home/nonAuth/wan_conn.xml', headers=request_headers)
 
+basic_status_js = requests.get('http://bthomehub.home/cgi/cgi_basicStatus.js', headers=request_headers)
+
+simple_status_re = re.compile('var linestatus = (.*)') #var linestatus = (.*?);')
+
+simple_status = simple_status_re.findall(basic_status_js.content.decode('utf-8'))
+# top and tail the response
+simple_status = simple_status[0].lstrip('[').rstrip(',').replace("'",'"')
+simple_status = re.sub('(\w+)\s?:\s?("?[^",]+"?,?)', "\"\g<1>\":\g<2>", simple_status)
+
+simple_status_dict = json.loads( simple_status )
+print( simple_status_dict )
+
+#basic_status_js = BeautifulSoup(basic_status_js.content, 'html.parser')
 #status_page_html = requests.get('http://bthomehub.home/basic_-_status.htm')
 #status_page_html = BeautifulSoup(status_page_html.content, 'html.parser')
 #print(status_page_html.prettify())
@@ -75,6 +89,9 @@ if status_page_xml.status_code == 200:
     current_status_dict['systemUptime'] = sysuptime
 
     current_status_dict['status'] = status_page.findall( ".//link_status")[0].get("value").split('%3B')[0]
+
+    for key, value in simple_status_dict.items():
+        current_status_dict[key] = value
     #current_status_dict['statusArr'] = status_page.findall( ".//link_status")[0].get("value").split('%3B')
 else:
 
@@ -83,6 +100,9 @@ else:
     current_status_dict['systemUptime'] = '0'
 
     current_status_dict['status'] = f'unavailable response code {status_page_xml.status_code}'
+
+    for key, value in simple_status_dict.items():
+        current_status_dict[key] = value
 
 """
 
