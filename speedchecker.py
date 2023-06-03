@@ -39,7 +39,7 @@ request_headers = { "Accept": "*/*",
                     "Connection": "keep-alive",
                     "Cookie": "'Cookie: logout=not; urn=1393433039ba30d0" }
 # connect to the hub, scrape data, push data to a csv
-output_csv = './btspeed.csv'
+output_csv = os.path.join(os.getcwd(), "btspeed.csv")
 
 #get current time stamp
 now = datetime.datetime.now().isoformat()
