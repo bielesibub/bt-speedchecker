@@ -1,3 +1,37 @@
+"""
+Author: bielesibub
+Date  : 03/06/2023
+
+Description:
+Simple python script to poll the bt router (bthomehub.home) and pull out the followiing data:
+
+timestamp               time of capture
+uploadSpeed             from http://bthomehub.home/nonAuth/wan_conn.xml
+downloadSpeed           from http://bthomehub.home/nonAuth/wan_conn.xml
+systemUptime            from http://bthomehub.home/nonAuth/wan_conn.xml
+status                  from http://bthomehub.home/nonAuth/wan_conn.xml    
+state                   state, UP / DOWN from http://bthomehub.home/cgi/cgi_basicStatus.js
+mode                    ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+mod_type                ??? from http://bthomehub.home/cgi/cgi_basicStatus.js       
+snr_margin_down         ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+snr_margin_up           ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+latn_down               ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+latn_up                 ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+satn_down               ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+satn_up                 ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+output_power_down       ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+output_power_up         ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+rate_down               ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+rate_up                 ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+attainable_rate_down    best rate download? from http://bthomehub.home/cgi/cgi_basicStatus.js
+attainable_rate_up      best rate upload? from http://bthomehub.home/cgi/cgi_basicStatus.js
+chantype                ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
+
+Why?:
+I've got 150Mbps stay fast guarantee with BT, I don't think I've ever come near to that, hopefully this is a way of checking
+
+"""
+
 import requests
 import os
 import datetime
@@ -8,30 +42,7 @@ from urllib.parse import unquote
 
 from bs4 import BeautifulSoup
 
-"""
-curl 'http://bthomehub.home/nonAuth/ajax.js' \
--X 'GET' \
--H 'Cookie: logout=not; urn=1393433039ba30d0' \
--H 'Accept: */*' \
--H 'Accept-Encoding: gzip, deflate' \
--H 'Host: bthomehub.home' \
--H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15' \
--H 'Accept-Language: en-GB,en;q=0.9' \
--H 'Referer: http://bthomehub.home/basic_-_status.htm' \
--H 'Connection: keep-alive'
-
-curl 'http://bthomehub.home/nonAuth/wan_conn.xml' \
--X 'GET' \
--H 'Referer: http://bthomehub.home/basic_-_status.htm' \
--H 'Accept: */*' \
--H 'Accept-Encoding: gzip, deflate' \
--H 'Host: bthomehub.home' \
--H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15' \
--H 'Accept-Language: en-GB,en;q=0.9' \
-
--H 'Connection: keep-alive'
--H 'Cookie: logout=not; urn=1393433039ba30d0' \
-"""
+# referer is the only important part here, the rest have been kept just in case
 request_headers = { "Accept": "*/*",
                     "Accept-Encoding": "gzip, deflate",
                     "Host": "bthomehub.home",
@@ -40,6 +51,7 @@ request_headers = { "Accept": "*/*",
                     "Referer": "http://bthomehub.home/basic_-_status.htm",
                     "Connection": "keep-alive",
                     "Cookie": "'Cookie: logout=not; urn=1393433039ba30d0" }
+
 # connect to the hub, scrape data, push data to a csv
 output_csv = os.path.join(os.getcwd(), "btspeed.csv")
 
@@ -50,85 +62,62 @@ now = datetime.datetime.now().isoformat()
 output_csv_exists = os.path.isfile(output_csv)
 
 status_page_xml = requests.get('http://bthomehub.home/nonAuth/wan_conn.xml', headers=request_headers)
-
 basic_status_js = requests.get('http://bthomehub.home/cgi/cgi_basicStatus.js', headers=request_headers)
 
 simple_status_re = re.compile('var linestatus = (.*)') #var linestatus = (.*?);')
-simple_status = simple_status_re.findall(basic_status_js.content.decode('utf-8'))
-# top and tail the response + change ' to "
-simple_status = simple_status[0].lstrip('[').rstrip(',').replace("'",'"')
+simple_status    = simple_status_re.findall(basic_status_js.content.decode('utf-8'))
+# top and tail the response and change ' to "
+simple_status    = simple_status[0].lstrip('[').rstrip(',').replace("'",'"')
 
 # https://stackoverflow.com/questions/48524894/dynamically-double-quote-keys-in-text-to-form-valid-json-string-in-python
-simple_status = re.sub('(\w+)\s?:\s?("?[^",]+"?,?)', "\"\g<1>\":\g<2>", simple_status)
-
+simple_status      = re.sub('(\w+)\s?:\s?("?[^",]+"?,?)', "\"\g<1>\":\g<2>", simple_status)
 simple_status_dict = json.loads( simple_status )
 
-
-fw_ver = re.findall( r'var fw_ver="(.*)";', basic_status_js.content.decode('utf-8'))
-serial_no = re.findall( r'var serial_no="(.*)";', basic_status_js.content.decode('utf-8'))
+fw_ver         = re.findall( r'var fw_ver="(.*)";', basic_status_js.content.decode('utf-8'))
+serial_no      = re.findall( r'var serial_no="(.*)";', basic_status_js.content.decode('utf-8'))
 fw_update_time = re.findall( r"var fw_update_time='(.*)';", basic_status_js.content.decode('utf-8'))
 lan_service_ip = re.findall( r'var lan_service_ip="(.*)";', basic_status_js.content.decode('utf-8'))
 
-simple_status_dict['fw_ver'] = unquote( fw_ver[0] )
-simple_status_dict['serial_no'] = unquote( serial_no[0] )
+simple_status_dict['fw_ver']         = unquote( fw_ver[0] )
+simple_status_dict['serial_no']      = unquote( serial_no[0] )
 simple_status_dict['fw_update_time'] = unquote( fw_update_time[0] )
 simple_status_dict['lan_service_ip'] = unquote( lan_service_ip[0] )
 
-#basic_status_js = BeautifulSoup(basic_status_js.content, 'html.parser')
-#status_page_html = requests.get('http://bthomehub.home/basic_-_status.htm')
-#status_page_html = BeautifulSoup(status_page_html.content, 'html.parser')
-#print(status_page_html.prettify())
 current_status_dict = {}
 current_status_dict['timestamp'] = now
 
 
 if status_page_xml.status_code == 200:
-    status_page = ET.fromstring(status_page_xml.content)
-    # sed -r '/wan_conn_volume_list/{N;s/.*\[.//;s/[^0-9]\],$//;s/%3B/ /g;s/^[0-9]+ ([0-9]+) ([0-9]+)$/\1 \2/g;p};d'
+    status_page     = ET.fromstring(status_page_xml.content)
     status_rate_arr = status_page.findall( ".//status_rate")[0].get("value")
-    sysuptime = status_page.findall( ".//sysuptime")[0].get("value")
-    # returns [['0%3B0%3B0%3B0'], ['49141000%3B107853000%3B0%3B0'], ['0%3B0%3B0%3B0'], null
+    sysuptime       = status_page.findall( ".//sysuptime")[0].get("value")
 
     status_rate_arr = status_rate_arr.replace('[', '').replace(']','').replace(' ','').replace("'",'').split(',')
 
-
-    # #broadband, #FirmwareVersion, #FirmwareUpdated, #SerialNumber, #NetworkUptime, #SystemUptime, #BTWiFi
-    # #Upstream
-    
-    #current_status_dict['statusRateArr'] = status_rate_arr[1].split('%3B')
-    current_status_dict['uploadSpeed'] = status_rate_arr[1].split('%3B')[0] #status_page.find("p", {"id": "Upstream"})
-    current_status_dict['downloadSpeed'] = status_rate_arr[1].split('%3B')[1] #status_page.find("p", {"id": "Upstream"})
-    current_status_dict['systemUptime'] = sysuptime
+    current_status_dict['uploadSpeed']   = status_rate_arr[1].split('%3B')[0]
+    current_status_dict['downloadSpeed'] = status_rate_arr[1].split('%3B')[1]
+    current_status_dict['systemUptime']  = sysuptime
 
     current_status_dict['status'] = status_page.findall( ".//link_status")[0].get("value").split('%3B')[0]
 
     for key, value in simple_status_dict.items():
         current_status_dict[key] = value
-    #current_status_dict['statusArr'] = status_page.findall( ".//link_status")[0].get("value").split('%3B')
+
 else:
 
-    current_status_dict['uploadSpeed'] = '0'
+    current_status_dict['uploadSpeed']   = '0'
     current_status_dict['downloadSpeed'] = '0'
-    current_status_dict['systemUptime'] = '0'
+    current_status_dict['systemUptime']  = '0'
 
     current_status_dict['status'] = f'unavailable response code {status_page_xml.status_code}'
 
     for key, value in simple_status_dict.items():
         current_status_dict[key] = value
 
-"""
-
-current_status_dict['broadband'] = status_page.select('#broadband')[0].text
-current_status_dict['firmware'] = status_page.select('#FirmwareVersion')[0].text
-current_status_dict['firmwareUpdated'] = status_page.select('#FirmwareUpdated')[0].text
-current_status_dict['serialNumber'] = status_page.select('#SerialNumber')[0].text
-current_status_dict['networkUptime'] = status_page.select('#NetworkUptime')[0].text
-current_status_dict['systemUptime'] = status_page.select('#SystemUptime')[0].text
-current_status_dict['btWifi'] = status_page.select('#BTWiFi')[0].text
-"""
 keys = []
 values = []
 
+# if output file doesn't exist, create it with header
 if not output_csv_exists:
     with open(output_csv, 'w') as output_csv_file:
 
@@ -139,7 +128,7 @@ if not output_csv_exists:
         output_csv_file.write(",".join( keys ) + '\n')
         output_csv_file.write(",".join( values ) + '\n')
 
-
+# if output file does exist, append the latest data
 else:
     with open(output_csv, 'a') as output_csv_file:
         for key, value in current_status_dict.items():
