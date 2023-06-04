@@ -4,6 +4,7 @@ import datetime
 import xml.etree.ElementTree as ET
 import json
 import re
+from urllib.parse import unquote
 
 from bs4 import BeautifulSoup
 
@@ -53,14 +54,25 @@ status_page_xml = requests.get('http://bthomehub.home/nonAuth/wan_conn.xml', hea
 basic_status_js = requests.get('http://bthomehub.home/cgi/cgi_basicStatus.js', headers=request_headers)
 
 simple_status_re = re.compile('var linestatus = (.*)') #var linestatus = (.*?);')
-
 simple_status = simple_status_re.findall(basic_status_js.content.decode('utf-8'))
-# top and tail the response
+# top and tail the response + change ' to "
 simple_status = simple_status[0].lstrip('[').rstrip(',').replace("'",'"')
+
+# https://stackoverflow.com/questions/48524894/dynamically-double-quote-keys-in-text-to-form-valid-json-string-in-python
 simple_status = re.sub('(\w+)\s?:\s?("?[^",]+"?,?)', "\"\g<1>\":\g<2>", simple_status)
 
 simple_status_dict = json.loads( simple_status )
-print( simple_status_dict )
+
+
+fw_ver = re.findall( r'var fw_ver="(.*)";', basic_status_js.content.decode('utf-8'))
+serial_no = re.findall( r'var serial_no="(.*)";', basic_status_js.content.decode('utf-8'))
+fw_update_time = re.findall( r"var fw_update_time='(.*)';", basic_status_js.content.decode('utf-8'))
+lan_service_ip = re.findall( r'var lan_service_ip="(.*)";', basic_status_js.content.decode('utf-8'))
+
+simple_status_dict['fw_ver'] = unquote( fw_ver[0] )
+simple_status_dict['serial_no'] = unquote( serial_no[0] )
+simple_status_dict['fw_update_time'] = unquote( fw_update_time[0] )
+simple_status_dict['lan_service_ip'] = unquote( lan_service_ip[0] )
 
 #basic_status_js = BeautifulSoup(basic_status_js.content, 'html.parser')
 #status_page_html = requests.get('http://bthomehub.home/basic_-_status.htm')
