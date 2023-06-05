@@ -1,1 +1,1 @@
-*/15 * * * * cd /media/pickler/share/bt-speedchecker; python3 /media/pickler/share/bt-speedchecker.py >/dev/null 2>&1
+*/15 * * * * cd /someDir/bt-speedchecker; python3 /someDir/bt-speedchecker/speedchecker.py >/dev/null 2>&1
