@@ -73,6 +73,7 @@ simple_status    = simple_status[0].lstrip('[').rstrip(',').replace("'",'"')
 
 # https://stackoverflow.com/questions/48524894/dynamically-double-quote-keys-in-text-to-form-valid-json-string-in-python
 simple_status      = re.sub('(\w+)\s?:\s?("?[^",]+"?,?)', "\"\g<1>\":\g<2>", simple_status)
+#simple_status should be a valid json string now, load it.
 simple_status_dict = json.loads( simple_status )
 
 fw_ver         = re.findall( r'var fw_ver="(.*)";', basic_status_js.content.decode('utf-8'))
