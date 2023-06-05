@@ -1,0 +1,52 @@
+<status>
+	<!-- REAL -->
+		<wan_conn_status_list type="array" value="[['disconnected%3B0%3Bpass'],
+['connected%3B150%3Bpass'],
+['disconnected%3B0%3Bpass'],
+null]" />
+		<wan_conn_volume_list type="array" value="[['URL_encoded_string'],
+['URL_encoded_string'],
+['URL_encoded_string'],
+null]" />
+		<wan_linestatus_rate_list type="array" value="[['UP','GFAST','G%2EDMT','195','80','317','0','317','0','0','40','137443','49996','111412000','67295000','fast'],
+null]" />
+		<wlan_channel_list type="array" value="[['1','0','1'],
+['1','0','1'],
+['1','0','1'],
+['1','0','1'],
+['1','0','1'],
+['36','0','36'],
+['36','0','36'],
+['36','0','36'],
+['36','0','36'],
+['36','0','36'],
+null]" />
+		<curlinkstatus type="array" value="[['disconnected%3B0'],
+['connected%3B123'],
+['disconnected%3B0'],
+null]" />
+		<sysuptime value="198511" />
+		<status_rate type="array" value="[['URL_encoded_string'],
+['URL_encoded_string'],
+['URL_encoded_string'],
+null]" />
+		<wan_active_idx value="1" />
+		<link_status value="connected%3Bvdsl%3B123" />
+		<ip4_info_list type="array" value="[['URL_encoded_string'],
+['URL_encoded_string'],
+['URL_encoded_string'],
+null]" />
+		<ip6_lla_list type="array" value="[['URL_encoded_string'],
+['URL_encoded_string'],
+['URL_encoded_string'],
+null]" />
+		<ip6_gua_list type="array" value="[['URL_encoded_string'],
+['URL_encoded_string'],
+['URL_encoded_string'],
+null]" />
+		<ip6_rdns_list type="array" value="[[null],[null],[null]]" />
+	<!-- END_REAL -->
+	<!--for home page, login lock-->
+		<locktime value="1" />
+	<!--END for home page, login lock-->
+</status>

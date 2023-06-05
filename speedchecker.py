@@ -3,7 +3,7 @@ Author: bielesibub
 Date  : 03/06/2023
 
 Description:
-Simple python script to poll the bt router (bthomehub.home) and pull out the followiing data:
+Simple python script to poll the bt router (bthomehub.home) and pull out the followiing data, then pump it into a csv file:
 
 timestamp               time of capture
 uploadSpeed             from http://bthomehub.home/nonAuth/wan_conn.xml
@@ -35,6 +35,9 @@ I've got 150Mbps stay fast guarantee with BT, I don't think I've ever come near 
 Additional:
 https://github.com/c-lake/csv-charts using this for reports
 
+Additional x2:
+Need to put some defensive code in
+
 """
 
 import requests
@@ -57,42 +60,47 @@ request_headers = { "Accept": "*/*",
                     "Connection": "keep-alive",
                     "Cookie": "'Cookie: logout=not; urn=1393433039ba30d0" }
 
-# connect to the hub, scrape data, push data to a csv
+
 output_csv = os.path.join(os.getcwd(), "btspeed.csv")
 
 #get current time stamp
 now = datetime.datetime.now().isoformat()
 
-#if output file doesn't exist, create it
+#boolean for checking if the output exists need this later on
 output_csv_exists = os.path.isfile(output_csv)
 
+# connect to the hub, get xml and js files
 status_page_xml = requests.get('http://bthomehub.home/nonAuth/wan_conn.xml', headers=request_headers)
 basic_status_js = requests.get('http://bthomehub.home/cgi/cgi_basicStatus.js', headers=request_headers)
 
 simple_status_re = re.compile('var linestatus = (.*)') #var linestatus = (.*?);')
 simple_status    = simple_status_re.findall(basic_status_js.content.decode('utf-8'))
-# top and tail the response and change ' to "
+# top and tail (remove [ and , ) and replace ' with "
 simple_status    = simple_status[0].lstrip('[').rstrip(',').replace("'",'"')
 
+# surround keynames with double quotes " to make the string valid Python JSON
 # https://stackoverflow.com/questions/48524894/dynamically-double-quote-keys-in-text-to-form-valid-json-string-in-python
 simple_status      = re.sub('(\w+)\s?:\s?("?[^",]+"?,?)', "\"\g<1>\":\g<2>", simple_status)
 #simple_status should be a valid json string now, load it.
 simple_status_dict = json.loads( simple_status )
 
+# get the various string values
 fw_ver         = re.findall( r'var fw_ver="(.*)";', basic_status_js.content.decode('utf-8'))
 serial_no      = re.findall( r'var serial_no="(.*)";', basic_status_js.content.decode('utf-8'))
 fw_update_time = re.findall( r"var fw_update_time='(.*)';", basic_status_js.content.decode('utf-8'))
 lan_service_ip = re.findall( r'var lan_service_ip="(.*)";', basic_status_js.content.decode('utf-8'))
 
+# store the values in the dictionary
 simple_status_dict['fw_ver']         = unquote( fw_ver[0] )
 simple_status_dict['serial_no']      = unquote( serial_no[0] )
 simple_status_dict['fw_update_time'] = unquote( fw_update_time[0] )
 simple_status_dict['lan_service_ip'] = unquote( lan_service_ip[0] )
 
+# why did I do this?
 current_status_dict = {}
 current_status_dict['timestamp'] = now
 
-
+# if we have a successful connection, dump out the data
 if status_page_xml.status_code == 200:
     status_page     = ET.fromstring(status_page_xml.content)
     status_rate_arr = status_page.findall( ".//status_rate")[0].get("value")
@@ -109,7 +117,7 @@ if status_page_xml.status_code == 200:
     for key, value in simple_status_dict.items():
         current_status_dict[key] = value
 
-else:
+else: # unsuccessful, still dump out something
 
     current_status_dict['uploadSpeed']   = '0'
     current_status_dict['downloadSpeed'] = '0'
