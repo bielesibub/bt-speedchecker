@@ -40,4 +40,4 @@ Raspberry Pi
  - crontab running speedchecker.py every 5 minutes
 
 ### Example chart:
-![Example speed chart](https://github.com/bielesibub/bt-speedchecker/support/main/bt-speedchecker.png)
+![Example speed chart](https://github.com/bielesibub/bt-speedchecker/blob/main/support/bt-speedchecker.png))
