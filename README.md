@@ -35,8 +35,9 @@ I've got 150Mbps stay fast guarantee with BT, I don't think I've ever come near 
 
 # Configuration
 ## My configuration:
-Raspberry Pi
+Raspberry Pi with:
  - nginx webserver hosting https://github.com/c-lake/csv-charts
+   - I load the csv into this when I want to check the stats, this could be hosted on a webpage I guess.
  - crontab running speedchecker.py every 5 minutes
 
 ### Example chart:
