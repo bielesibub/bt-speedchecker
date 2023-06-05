@@ -1,7 +1,14 @@
-# BT SpeedChecker
- 
-# Description:
-Simple python script to poll the bt router (bthomehub.home) and pull out the followiing data:
+# BT Broadband SpeedChecker
+
+# Why?
+I've got 150Mbps stay fast guarantee with BT (and I pay a premium for this) I don't think I've ever come close to that actual speed. I raised an issue with BT at the end of May 2023, they seemed surprised that I was questioning the real speed of my connection. Do BT really check that my connection is what I am paying for? If they do, why haven't I heard from them when it's not hit the mark? Why should it be **MY** responsibility to let them know it's slow? I hope that this is a way for me or anyone else to be able to check themselves.
+
+Hopefully this might be useful to someone else out there.
+
+I've trawled through the status objects and made the assumption that the *attainable_rate_down* and *attainable_rate_up* are the speeds that I could be getting at the time of the scrape.  
+
+# Description
+Simple python script to poll the bt router (bthomehub.home) and pull out the following data, from wan_conn.xml and cgi_basicStatus.js:
 
 | Field | Description |
 | :--- | :--- |
@@ -30,15 +37,15 @@ Simple python script to poll the bt router (bthomehub.home) and pull out the fol
 # How?
 Run the speedchecker.py script and a csv will be created or appended to. Assumption that your router is findable using http://bthomehub.home
 
-# Why?
-I've got 150Mbps stay fast guarantee with BT, I don't think I've ever come near to that, hopefully this is a way of checking. 
-
 # Configuration
 ## My configuration:
 Raspberry Pi with:
  - nginx webserver hosting https://github.com/c-lake/csv-charts
-   - I load the csv into this when I want to check the stats, this could be hosted on a webpage I guess.
+   - I load the csv from a network share into this page when I want to check the stats.
  - crontab running speedchecker.py every 5 minutes
 
 ### Example chart:
 ![Example speed chart](https://github.com/bielesibub/bt-speedchecker/blob/main/support/bt-speedchecker.png)
+
+# Who am I?
+I am a bored, medically retired, IT consultant. #UTV
