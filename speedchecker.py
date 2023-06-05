@@ -32,6 +32,9 @@ chantype                ??? from http://bthomehub.home/cgi/cgi_basicStatus.js
 Why?:
 I've got 150Mbps stay fast guarantee with BT, I don't think I've ever come near to that, hopefully this is a way of checking.
 
+Additional:
+https://github.com/c-lake/csv-charts using this for reports
+
 """
 
 import requests
