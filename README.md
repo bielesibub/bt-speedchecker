@@ -1,7 +1,7 @@
 # BT Broadband SpeedChecker
 
 # Why?
-I've got 150Mbps stay fast guarantee with BT (and I pay a premium for this) I don't think I've ever come close to that actual speed. I raised an issue with BT at the end of May 2023, they seemed surprised that I was questioning the real speed of my connection. Do BT really check that my connection is what I am paying for? If they do, why haven't I heard from them when it's not hit the mark? Why should it be **MY** responsibility to let them know it's slow? I hope that this is a way for me or anyone else to be able to check themselves.
+I've got 150Mbps stay fast guarantee with BT (and I pay a premium for this) I don't think I've ever come close to that actual speed. I raised an issue with BT at the end of May 2023, they seemed surprised that I was questioning the real speed of my connection. Do BT really check that my connection is what I am paying for? If they do, why haven't I heard from them when it's not hit the mark? if not, why should it be **MY** responsibility to let them know it's slow? I hope that this is a way for me or anyone else to be able to check themselves.
 
 Hopefully this might be useful to someone else out there.
 
