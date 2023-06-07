@@ -5,7 +5,7 @@ I've got 150Mbps stay fast guarantee with BT (and I pay a premium for this) I do
 
 Hopefully this might be useful to someone else out there.
 
-I've trawled through the status objects and made the assumption that the *attainable_rate_down* and *attainable_rate_up* are the speeds that I could be getting at the time of the scrape.  
+I've trawled through the status objects and made the assumption that the *attainable_rate_down* and *attainable_rate_up* are the speeds that I should be looking at for the up/down speeds. **BT engineer confirmed this yesterday 6th June 2023
 
 # Description
 Simple python script to poll the bt router (bthomehub.home) and pull out the following data, from wan_conn.xml and cgi_basicStatus.js:
