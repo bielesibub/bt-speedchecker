@@ -1,11 +1,13 @@
 # BT Broadband SpeedChecker
 
 # Why?
-I've got 150Mbps stay fast guarantee with BT (and I pay a premium for this) I don't think I've ever come close to that actual speed. I raised an issue with BT at the end of May 2023, they seemed surprised that I was questioning the real speed of my connection. Do BT really check that my connection is what I am paying for? If they do, why haven't I heard from them when it's not hit the mark? Why should it be **MY** responsibility to let them know it's slow? I hope that this is a way for me or anyone else to be able to check themselves.
+I've got 150Mbps stay fast guarantee with BT (and I pay a premium for this) I don't think I've ever come close to that actual speed. I raised an issue with BT at the end of May 2023, they seemed surprised that I was questioning the real speed of my connection. Do BT really check that my connection is what I am paying for? If they do, why haven't I heard from them when it's not hit the mark? if not, why should it be **MY** responsibility to let them know it's slow? I hope that this is a way for me or anyone else to be able to check themselves.
 
 Hopefully this might be useful to someone else out there.
 
-I've trawled through the status objects and made the assumption that the *attainable_rate_down* and *attainable_rate_up* are the speeds that I could be getting at the time of the scrape.  
+I've trawled through the status objects and made the assumption that the *attainable_rate_down* and *attainable_rate_up* are the speeds that I should be looking at for the up/down speeds. *BT engineer confirmed this yesterday 6th June 2023*
+
+*UPDATE 09 June 2023* the reasons for my slow speeds was due to being supplied the wrong wall socket (one that I'd had for years) - check you have the correct socket . I spoke with BT they hid behind the terms and conditions - **THE CUSTOMER IS RESPONSIBLE FOR MONITORING THE SPEEDS OF THEIR BROADBAND** you can check this using the BT app, or you can check using my script. If you see slower speeds than you are paying for, call BT and get them to send round an engineer.
 
 # Description
 Simple python script to poll the bt router (bthomehub.home) and pull out the following data, from wan_conn.xml and cgi_basicStatus.js:
@@ -46,6 +48,9 @@ Raspberry Pi with:
 
 ### Example chart:
 ![Example speed chart](https://github.com/bielesibub/bt-speedchecker/blob/main/support/bt-speedchecker.png)
+
+### Chart after socket switch:
+
 
 # Who am I?
 I am a bored, medically retired, IT consultant. #UTV
