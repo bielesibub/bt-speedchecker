@@ -50,7 +50,7 @@ Raspberry Pi with:
 ![Example speed chart](https://github.com/bielesibub/bt-speedchecker/blob/main/support/bt-speedchecker.png)
 
 ### Chart after socket switch:
-
+![Speed chart Post Socket change](https://github.com/bielesibub/bt-speedchecker/blob/main/support/bt-speedchecker-post-switch.png)
 
 # Who am I?
 I am a bored, medically retired, IT consultant. #UTV
